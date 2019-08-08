@@ -21,18 +21,20 @@ public class SQLiteServiceVerticle extends AbstractVerticle {
     @Override
     public void start(Future<Void> startFuture) {
 
+        ConfigStoreOptions confStore = new ConfigStoreOptions()
+                .setType("env");
 
-        ConfigStoreOptions fileStore = new ConfigStoreOptions()
-                .setType("file")
-                .setConfig(new JsonObject().put("path", this.getClass().getClassLoader().getResource("conf/application.conf").getFile()));
-
-        ConfigRetrieverOptions options = new ConfigRetrieverOptions().addStore(fileStore);
+        ConfigRetrieverOptions options = new ConfigRetrieverOptions().addStore(confStore);
 
         ConfigRetriever retriever = ConfigRetriever.create(vertx, options);
 
         retriever.getConfig(ar -> {
             if (ar.succeeded()) {
-                JsonObject config = ar.result().getJsonObject("config").getJsonObject("database");
+                JsonObject env = ar.result();
+                JsonObject config = new JsonObject()
+                        .put("url", "jdbc:sqlite:"+env.getString("DB_URL"))
+                        .put("driver_class", "org.sqlite.jdbcDriver")
+                        .put("max_pool_size", 30);
                 SQLClient jdbc = JDBCClient.createShared(vertx, config);
                 SQLiteService.create(jdbc, ready -> {
                     if (ready.succeeded()) {

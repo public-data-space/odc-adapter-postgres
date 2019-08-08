@@ -105,7 +105,7 @@ import java.util.*;
                     );
 
             LOGGER.info("Starting Postgres adapter...");
-            server.requestHandler(router).listen(8095);
+            server.requestHandler(router).listen(8080);
             LOGGER.info("Postgres adapter successfully started.");
         }
 
