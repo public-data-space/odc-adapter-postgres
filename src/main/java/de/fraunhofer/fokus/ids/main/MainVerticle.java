@@ -104,9 +104,76 @@ import java.util.*;
                             supported(result -> reply(result, routingContext.response()))
                     );
 
+            router.route("/getDataAssetFormSchema")
+                    .handler(routingContext ->
+                            getDataAssetFormSchema(result -> reply(result, routingContext.response()))
+                    );
+
+            router.route("/getDataSourceFormSchema")
+                    .handler(routingContext ->
+                            getDataSourceFormSchema(result -> reply(result, routingContext.response()))
+                    );
+
             LOGGER.info("Starting Postgres adapter...");
             server.requestHandler(router).listen(8080);
             LOGGER.info("Postgres adapter successfully started.");
+        }
+
+        private void getDataSourceFormSchema(Handler<AsyncResult<String>> next) {
+            LOGGER.info("Returning form schema for data source.");
+            JsonObject jO = new JsonObject();
+            jO.put("type","object");
+            jO.put("properties", new JsonObject()
+                    .put("datasourceUrl", new JsonObject()
+                            .put("type", "string")
+                            .put("ui", new JsonObject()
+                                    .put("label", "Data Source URL")
+                                    .put("placeholder", "http://localhost")))
+                    .put("datasourcePort", new JsonObject()
+                            .put("type", "string")
+                            .put("ui", new JsonObject()
+                                    .put("label", "Data Source Port")
+                                    .put("placeholder", "5432")))
+                    .put("databaseName", new JsonObject()
+                            .put("type", "string")
+                            .put("ui", new JsonObject()
+                                    .put("label", "Database Name")))
+                    .put("username", new JsonObject()
+                            .put("type", "string")
+                            .put("ui", new JsonObject()
+                                    .put("label", "Username")))
+                    .put("password", new JsonObject()
+                            .put("type", "string")
+                            .put("ui", new JsonObject()
+                                    .put("label", "Password")
+                                    .put("widgetConfig", new JsonObject()
+                                            .put("type", "password")))));
+            next.handle(Future.succeededFuture(jO.toString()));
+        }
+
+        private void getDataAssetFormSchema(Handler<AsyncResult<String>> next) {
+            LOGGER.info("Returning form schema for data asset.");
+
+            JsonObject jO = new JsonObject();
+            jO.put("type","object");
+            jO.put("properties", new JsonObject()
+                    .put("query", new JsonObject()
+                            .put("type", "string")
+                            .put("ui", new JsonObject()
+                                    .put("label", "SQL Query")
+                                    .put("placeholder", "SELECT * FROM table;")))
+                    .put("datasettitle", new JsonObject()
+                            .put("type", "string")
+                            .put("ui", new JsonObject()
+                                    .put("label", "Data Asset Title")
+                                    .put("placeholder", "My Data Asset")))
+                    .put("datasetnotes", new JsonObject()
+                            .put("type", "string")
+                            .put("ui", new JsonObject()
+                                    .put("label", "Data Asset Description")
+                                    .put("placeholder", "Description about My Data Asset"))));
+
+            next.handle(Future.succeededFuture(jO.toString()));
         }
 
         private void supported(Handler<AsyncResult<String>> next) {
