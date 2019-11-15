@@ -1,6 +1,5 @@
 package de.fraunhofer.fokus.ids.services.sqlite;
 
-import de.fraunhofer.fokus.ids.services.database.DatabaseService;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -14,7 +13,9 @@ import io.vertx.ext.sql.SQLConnection;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * @author Vincent Bohlen, vincent.bohlen@fokus.fraunhofer.de
+ */
 public class SQLiteServiceImpl implements SQLiteService {
     private Logger LOGGER = LoggerFactory.getLogger(de.fraunhofer.fokus.ids.services.database.DatabaseServiceImpl.class.getName());
     private SQLClient jdbc;
@@ -46,7 +47,7 @@ public class SQLiteServiceImpl implements SQLiteService {
      * @param params Query parameters for the SQL query
      * @param connectionType UPDATE or QUERY depending on the type of database manipulation to be performed
      */
-    public void createResult(String queryString, JsonArray params, ConnectionType connectionType, Handler<AsyncResult<List<JsonObject>>> resultHandler){
+    private void createResult(String queryString, JsonArray params, ConnectionType connectionType, Handler<AsyncResult<List<JsonObject>>> resultHandler){
 
         createConnection(connection -> handleConnection(connection,
                 connectionType,
@@ -116,7 +117,7 @@ public class SQLiteServiceImpl implements SQLiteService {
                              Handler<AsyncResult<List<JsonObject>>> resultHandler) {
 
         if(result.failed()){
-            LOGGER.error("Connection Future failed.\n\n"+ result.cause());
+            LOGGER.error("Connection Future failed.", result.cause());
             resultHandler.handle(Future.failedFuture(result.cause().toString()));
         }
         else {
@@ -127,7 +128,7 @@ public class SQLiteServiceImpl implements SQLiteService {
                     next.handle(Future.succeededFuture(rs.getRows()));
                     connection.close();
                 } else {
-                    LOGGER.error("Query failed.\n\n" + query.cause().getMessage());
+                    LOGGER.error("Query failed.", query.cause().getMessage());
                     resultHandler.handle(Future.failedFuture(query.cause().toString()));
                     connection.close();
                 }
@@ -147,7 +148,7 @@ public class SQLiteServiceImpl implements SQLiteService {
                               Handler<AsyncResult<List<JsonObject>>> resultHandler) {
 
         if(result.failed()){
-            LOGGER.error("Connection Future failed.\n\n"+ result.cause());
+            LOGGER.error("Connection Future failed.", result.cause());
             resultHandler.handle(Future.failedFuture(result.cause().toString()));
         }
         else {
@@ -158,7 +159,7 @@ public class SQLiteServiceImpl implements SQLiteService {
                     resultHandler.handle(Future.succeededFuture(new ArrayList<>()));
                     connection.close();
                 } else {
-                    LOGGER.error("Update failed.\n\n" + query.cause().getMessage());
+                    LOGGER.error("Update failed.", query.cause().getMessage());
                     resultHandler.handle(Future.failedFuture(query.cause().toString()));
                     connection.close();
                 }
@@ -173,7 +174,7 @@ public class SQLiteServiceImpl implements SQLiteService {
     private void handleResult(AsyncResult<List<JsonObject>> result, Handler<AsyncResult<List<JsonObject>>> resultHandler){
 
         if(result.failed()){
-            LOGGER.error("List<JsonObject> Future failed.\n\n"+ result.cause());
+            LOGGER.error("List<JsonObject> Future failed.", result.cause());
             resultHandler.handle(Future.failedFuture(result.cause().toString()));
         }
         else {

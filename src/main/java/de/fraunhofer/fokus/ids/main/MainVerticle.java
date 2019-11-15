@@ -23,9 +23,11 @@ import io.vertx.ext.web.handler.CorsHandler;
 import org.apache.http.entity.ContentType;
 
 import java.util.*;
-
+/**
+ * @author Vincent Bohlen, vincent.bohlen@fokus.fraunhofer.de
+ */
     public class MainVerticle extends AbstractVerticle {
-        private static Logger LOGGER = LoggerFactory.getLogger(de.fraunhofer.fokus.ids.main.MainVerticle.class.getName());
+        private static Logger LOGGER = LoggerFactory.getLogger(MainVerticle.class.getName());
         private Router router;
         private DataAssetService dataAssetService;
         private DataService dataService;
@@ -48,13 +50,12 @@ import java.util.*;
                             LOGGER.info("Initialization complete.");
                         }
                         else{
-                            LOGGER.info("Initialization failed.");
+                            LOGGER.error("Initialization failed.");
                         }
                     });
-
                 }
                 else{
-                    LOGGER.info("DataBaseService failed");
+                    LOGGER.error("DataBaseService failed");
                 }
             });
             vertx.deployVerticle(DatabaseServiceVerticle.class.getName(), deploymentOptions, reply3 -> {
@@ -62,7 +63,7 @@ import java.util.*;
                     LOGGER.info("DatabaseServiceVerticle started");
                 }
                 else{
-                    LOGGER.info(reply3.cause());
+                    LOGGER.error(reply3.cause());
                 }
             });
 
@@ -124,17 +125,17 @@ import java.util.*;
             JsonObject jO = new JsonObject();
             jO.put("type","object");
             jO.put("properties", new JsonObject()
-                    .put("datasourceUrl", new JsonObject()
+                    .put("host", new JsonObject()
                             .put("type", "string")
                             .put("ui", new JsonObject()
                                     .put("label", "Data Source URL")
                                     .put("placeholder", "http://localhost")))
-                    .put("datasourcePort", new JsonObject()
+                    .put("port", new JsonObject()
                             .put("type", "string")
                             .put("ui", new JsonObject()
                                     .put("label", "Data Source Port")
                                     .put("placeholder", "5432")))
-                    .put("databaseName", new JsonObject()
+                    .put("database", new JsonObject()
                             .put("type", "string")
                             .put("ui", new JsonObject()
                                     .put("label", "Database Name")))

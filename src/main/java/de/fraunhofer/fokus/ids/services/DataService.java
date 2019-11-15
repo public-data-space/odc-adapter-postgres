@@ -14,7 +14,9 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-
+/**
+ * @author Vincent Bohlen, vincent.bohlen@fokus.fraunhofer.de
+ */
 public class DataService {
     private static Logger LOGGER = LoggerFactory.getLogger(DataService.class.getName());
 
@@ -31,22 +33,21 @@ public class DataService {
         DataAsset dataAsset = request.getDataAsset();
         sqLiteService.query("SELECT query FROM accessinformation WHERE dataassetid = ?", new JsonArray().add(dataAsset.getId()), reply -> {
            if(reply.succeeded()){
-                databaseService.query(dataSource.getData(), reply.result().get(0).getString("query"), new JsonArray(), reply2 -> {
+                databaseService.query(dataSource.getData().put("port",Long.parseLong(dataSource.getData().getString("port"))), reply.result().get(0).getString("query"), new JsonArray(), reply2 -> {
                     if(reply2.succeeded()){
-
                         JsonObject jO = new JsonObject();
                         jO.put("result", new JsonArray(reply2.result()));
                         resultHandler.handle(Future.succeededFuture(jO));
 
                     }
                     else{
-                        LOGGER.info("Data could not be queries", reply2.cause());
+                        LOGGER.error("Data could not be queried", reply2.cause());
                         resultHandler.handle(Future.failedFuture(reply2.cause()));
                     }
                 });
            }
            else{
-               LOGGER.info("Query could not be loaded",reply.cause());
+               LOGGER.error("Query could not be loaded",reply.cause());
                resultHandler.handle(Future.failedFuture(reply.cause()));
            }
         });

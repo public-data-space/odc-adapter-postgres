@@ -7,10 +7,10 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
 import io.vertx.serviceproxy.ServiceBinder;
-
+/**
+ * @author Vincent Bohlen, vincent.bohlen@fokus.fraunhofer.de
+ */
 public class DatabaseServiceVerticle extends AbstractVerticle {
-
-    private Logger LOGGER = LoggerFactory.getLogger(DatabaseServiceVerticle.class.getName());
 
     @Override
     public void start(Future<Void> startFuture) {

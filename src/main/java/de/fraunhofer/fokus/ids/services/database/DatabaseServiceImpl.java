@@ -16,7 +16,9 @@ import io.vertx.ext.sql.SQLConnection;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * @author Vincent Bohlen, vincent.bohlen@fokus.fraunhofer.de
+ */
 public class DatabaseServiceImpl implements DatabaseService {
     private Logger LOGGER = LoggerFactory.getLogger(DatabaseServiceImpl.class.getName());
     private Vertx vertx;
@@ -27,13 +29,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public DatabaseService query(JsonObject jdbcConfig, String query, JsonArray params, Handler<AsyncResult<List<JsonObject>>> resultHandler) {
-        SQLClient jdbc = PostgreSQLClient.createShared(vertx, new JsonObject("{\n" +
-                "      \"host\": \"localhost\",\n" +
-                "      \"port\": 5432,\n" +
-                "      \"username\": \"ids\",\n" +
-                "      \"database\": \"ids\",\n" +
-                "      \"password\": \"ids\"\n" +
-                "    }"));
+        SQLClient jdbc = PostgreSQLClient.createShared(vertx, jdbcConfig);
 
         createResult(jdbc, query, params, resultHandler);
         return this;
@@ -43,7 +39,7 @@ public class DatabaseServiceImpl implements DatabaseService {
      * @param queryString SQL Query to perform
      * @param params Query parameters for the SQL query
      */
-    public void createResult(SQLClient jdbcClient, String queryString, JsonArray params, Handler<AsyncResult<List<JsonObject>>> resultHandler){
+    private void createResult(SQLClient jdbcClient, String queryString, JsonArray params, Handler<AsyncResult<List<JsonObject>>> resultHandler){
 
         createConnection(connection -> handleConnection(connection,
                 queryString,
@@ -65,7 +61,7 @@ public class DatabaseServiceImpl implements DatabaseService {
                 next.handle(Future.succeededFuture(res.result()));
             }
             else{
-                LOGGER.error("Connection could not be established.\n\n" + res.cause().getMessage());
+                LOGGER.error("Connection could not be established.", res.cause());
                 next.handle(Future.failedFuture(res.cause().toString()));
             }
         });
@@ -100,8 +96,8 @@ public class DatabaseServiceImpl implements DatabaseService {
                              Handler<AsyncResult<List<JsonObject>>> next) {
 
         if(result.failed()){
-            LOGGER.error("Connection Future failed.\n\n"+ result.cause());
-            next.handle(Future.failedFuture(result.cause().toString()));
+            LOGGER.error("Connection Future failed.", result.cause());
+            next.handle(Future.failedFuture(result.cause()));
         }
         else {
             SQLConnection connection = result.result();
@@ -111,8 +107,8 @@ public class DatabaseServiceImpl implements DatabaseService {
                     next.handle(Future.succeededFuture(rs.getRows()));
                     connection.close();
                 } else {
-                    LOGGER.error("Query failed.\n\n" + query.cause().getMessage());
-                    next.handle(Future.failedFuture(query.cause().toString()));
+                    LOGGER.error("Query failed.", query.cause());
+                    next.handle(Future.failedFuture(query.cause()));
                     connection.close();
                 }
             });
@@ -126,8 +122,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     private void handleResult(AsyncResult<List<JsonObject>> result, Handler<AsyncResult<List<JsonObject>>> resultHandler){
 
         if(result.failed()){
-            LOGGER.error("List<JsonObject> Future failed.\n\n"+ result.cause());
-            resultHandler.handle(Future.failedFuture(result.cause().toString()));
+            LOGGER.error("List<JsonObject> Future failed.", result.cause());
+            resultHandler.handle(Future.failedFuture(result.cause()));
         }
         else {
             resultHandler.handle(Future.succeededFuture(result.result()));

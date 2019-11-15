@@ -1,6 +1,5 @@
 package de.fraunhofer.fokus.ids.services.sqlite;
 
-import de.fraunhofer.fokus.ids.services.database.DatabaseServiceImpl;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.codegen.annotations.ProxyGen;
@@ -13,7 +12,9 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.SQLClient;
 
 import java.util.List;
-
+/**
+ * @author Vincent Bohlen, vincent.bohlen@fokus.fraunhofer.de
+ */
 @ProxyGen
 @VertxGen
 public interface SQLiteService {

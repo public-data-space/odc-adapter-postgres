@@ -18,11 +18,13 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
 import java.util.Date;
-
+/**
+ * @author Vincent Bohlen, vincent.bohlen@fokus.fraunhofer.de
+ */
 public class DataAssetService {
     private static Logger LOGGER = LoggerFactory.getLogger(DataAssetService.class.getName());
 
-    SQLiteService sqLiteService;
+    private SQLiteService sqLiteService;
 
     public DataAssetService(Vertx vertx){
         sqLiteService = SQLiteService.createProxy(vertx, Constants.SQLITE_SERVICE);
@@ -69,7 +71,7 @@ public class DataAssetService {
 
             }
             else{
-                LOGGER.info("DataAsset info could not be inserted.",reply.cause());
+                LOGGER.error("DataAsset info could not be inserted.",reply.cause());
                 resultHandler.handle(Future.failedFuture(reply.cause()));
             }
         });

@@ -12,7 +12,9 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.sql.SQLClient;
 import io.vertx.serviceproxy.ServiceBinder;
-
+/**
+ * @author Vincent Bohlen, vincent.bohlen@fokus.fraunhofer.de
+ */
 public class SQLiteServiceVerticle extends AbstractVerticle {
 
     private Logger LOGGER = LoggerFactory.getLogger(de.fraunhofer.fokus.ids.services.database.DatabaseServiceVerticle.class.getName());
