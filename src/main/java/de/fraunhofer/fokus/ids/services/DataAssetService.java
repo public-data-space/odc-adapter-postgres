@@ -66,11 +66,10 @@ public class DataAssetService {
                         .add(dataAsset.getId())
                         .add(description.getString("query", "")), reply -> {
 
-            if(reply.succeeded()){
+            if(reply.succeeded()) {
                 resultHandler.handle(Future.succeededFuture(new JsonObject(Json.encode(dataAsset))));
 
-            }
-            else{
+            } else{
                 LOGGER.error("DataAsset info could not be inserted.",reply.cause());
                 resultHandler.handle(Future.failedFuture(reply.cause()));
             }
@@ -78,7 +77,13 @@ public class DataAssetService {
     }
 
     public void deleteDataAsset(Long id, Handler<AsyncResult<JsonObject>> resultHandler){
-
+        sqLiteService.update("DELETE FROM accessinformation WHERE dataassetid=?", new JsonArray().add(id), reply -> {
+            if(reply.succeeded()) {
+                resultHandler.handle(Future.succeededFuture());
+            }
+            else {
+                resultHandler.handle(Future.failedFuture(reply.cause()));
+            }
+        });
     }
-
 }

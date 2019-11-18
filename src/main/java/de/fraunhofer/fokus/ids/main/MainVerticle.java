@@ -92,7 +92,7 @@ import java.util.*;
                     dataAssetService.createDataAsset(Json.decodeValue(routingContext.getBodyAsJson().toString(), DataAssetCreateMessage.class), reply ->
                             reply(reply, routingContext.response())));
 
-            router.post("/delete").handler(routingContext ->
+            router.route("/delete/:id").handler(routingContext ->
                     dataAssetService.deleteDataAsset(Long.parseLong(routingContext.request().getParam("id")), reply ->
                             reply(reply, routingContext.response())));
 
