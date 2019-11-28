@@ -18,6 +18,8 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
 import java.util.Date;
+import java.util.Map;
+
 /**
  * @author Vincent Bohlen, vincent.bohlen@fokus.fraunhofer.de
  */
@@ -33,12 +35,11 @@ public class DataAssetService {
     public void createDataAsset(DataAssetCreateMessage message, Handler<AsyncResult<JsonObject>> resultHandler){
 
         DataSource dataSource = message.getDataSource();
-        Job job = message.getJob();
         DataAsset dataAsset = new DataAsset();
         dataAsset.setId(message.getDataAssetId());
         dataAsset.setSourceID(dataSource.getId());
 
-        JsonObject description = job.getData();
+        JsonObject description = message.getData();
 
         dataAsset.setFormat(description.getString("format", null));
         dataAsset.setName(description.getString("name", null));
