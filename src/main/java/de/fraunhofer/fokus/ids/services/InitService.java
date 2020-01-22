@@ -69,7 +69,7 @@ public class InitService {
             if (ar.succeeded()) {
                 if (ar.result().containsKey("ROUTE_ALIAS")) {
                     JsonObject registration = new JsonObject()
-                            .put("name", "POSTGRESQL_ADAPTER")
+                            .put("name", ar.result().getString("ROUTE_ALIAS"))
                             .put("address", new JsonObject()
                                     .put("host", ar.result().getString("ROUTE_ALIAS"))
                                     .put("port", 8080));
