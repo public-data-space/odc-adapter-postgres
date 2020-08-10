@@ -28,16 +28,14 @@ public class DataService {
         this.databaseService = DatabaseService.createProxy(vertx, Constants.DATABASE_SERVICE);
     }
 
-    public void getData(ResourceRequest request, Handler<AsyncResult<JsonObject>> resultHandler){
+    public void getData(ResourceRequest request, Handler<AsyncResult<JsonArray>> resultHandler){
         DataSource dataSource = request.getDataSource();
         DataAsset dataAsset = request.getDataAsset();
         sqLiteService.query("SELECT query FROM accessinformation WHERE dataassetid = ?", new JsonArray().add(dataAsset.getId()), reply -> {
            if(reply.succeeded()){
                 databaseService.query(dataSource.getData().put("port",Long.parseLong(dataSource.getData().getString("port"))), reply.result().get(0).getString("query"), new JsonArray(), reply2 -> {
                     if(reply2.succeeded()){
-                        JsonObject jO = new JsonObject();
-                        jO.put("result", new JsonArray(reply2.result()));
-                        resultHandler.handle(Future.succeededFuture(jO));
+                        resultHandler.handle(Future.succeededFuture(new JsonArray(reply2.result())));
 
                     }
                     else{
