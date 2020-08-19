@@ -19,6 +19,7 @@ import io.vertx.core.logging.LoggerFactory;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Vincent Bohlen, vincent.bohlen@fokus.fraunhofer.de
@@ -60,6 +61,7 @@ public class DataAssetService {
         dataAsset.setDataSetDescription(description.getString("datasetdescription", null));
         dataAsset.setSignature(description.getString("signature", null));
         dataAsset.setStatus(DataAssetStatus.APPROVED);
+        dataAsset.setFilename(UUID.randomUUID().toString()+".json");
 
         Date d = new Date();
         sqLiteService.update("INSERT INTO accessinformation (created_at, updated_at, dataassetid, query) values(?,?,?,?)",
